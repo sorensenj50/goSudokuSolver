@@ -20,6 +20,7 @@ func main() {
 	}
 
 	puzzle := makePuzzle(samplePuzzleValues)
-	puzzle.display()
+	puzzle.generateRandomSolution()
+	displayGrid(puzzle.valuesWithInput)
 
 }

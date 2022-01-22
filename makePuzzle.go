@@ -1,15 +1,11 @@
 package main
 
-import (
-	"fmt"
-	"strconv"
-)
-
 var exists = struct{}{}
 
 type Puzzle struct {
-	cellValues   [9][9]int
-	neededSpaces [][2]int
+	initialValues   [9][9]int
+	valuesWithInput [9][9]int
+	neededSpaces    [][2]int
 
 	rowSets   map[int]map[int]struct{}
 	colSets   map[int]map[int]struct{}
@@ -41,39 +37,12 @@ func makePuzzle(data [9][9]int) Puzzle {
 			}
 		}
 	}
-	puzzle.cellValues = data
+	puzzle.initialValues = data
+	puzzle.valuesWithInput = data
 	puzzle.rowSets = rowSets
 	puzzle.colSets = colSets
 	puzzle.blockSets = blockSets
 	puzzle.neededSpaces = neededSpaces
 
 	return puzzle
-}
-
-func calculateBlockNumber(i int, j int) int {
-	return (i / 3) + (j/3)*3
-}
-
-func (puzzle Puzzle) display() {
-	fmt.Println()
-	fmt.Println("  Puzzle")
-	string := "  "
-	for i := range [9]int{} {
-		for j := range [9]int{} {
-			string += strconv.Itoa(puzzle.cellValues[i][j])
-			if j == 2 || j == 5 {
-				string += "  "
-				string += "|"
-				string += "  "
-			} else {
-				string += " "
-			}
-		}
-		string += "\n  "
-		if i == 2 || i == 5 {
-			string += "--------------------------"
-			string += "\n  "
-		}
-	}
-	fmt.Print(string)
 }
