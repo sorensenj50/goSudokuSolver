@@ -1,24 +1,23 @@
 package main
 
-var exists = struct{}{}
+type PuzzleResult int
 
 type Puzzle struct {
-	initialValues   [9][9]int
-	valuesWithInput [9][9]int
-	neededSpaces    [][2]int
+	cellValues   [gridSize][gridSize]int
+	neededSpaces [][gridDimensions]int
 
 	rowSets   map[int]map[int]struct{}
 	colSets   map[int]map[int]struct{}
 	blockSets map[int]map[int]struct{}
 }
 
-func makePuzzle(data [9][9]int) Puzzle {
+func makePuzzle(data [gridSize][gridSize]int) Puzzle {
 	var puzzle Puzzle
 
 	rowSets := make(map[int]map[int]struct{})
 	colSets := make(map[int]map[int]struct{})
 	blockSets := make(map[int]map[int]struct{})
-	neededSpaces := [][2]int{}
+	neededSpaces := [][gridDimensions]int{}
 
 	for i := range [9]int{} {
 		rowSets[i] = make(map[int]struct{})
@@ -26,23 +25,29 @@ func makePuzzle(data [9][9]int) Puzzle {
 		blockSets[i] = make(map[int]struct{})
 	}
 
-	for j := range [9]int{} {
-		for k := range [9]int{} {
-			value := data[j][k]
-			rowSets[j][value] = exists
-			colSets[k][value] = exists
-			blockSets[calculateBlockNumber(j, k)][value] = exists
+	for row := range [gridSize]int{} {
+		for col := range [gridSize]int{} {
+			value := data[row][col]
 			if value == 0 {
-				neededSpaces = append(neededSpaces, [2]int{j, k})
+				neededSpaces = append(neededSpaces, [gridDimensions]int{row, col})
+			} else { // only want non-zero values in sets
+				rowSets[row][value] = exists
+				colSets[col][value] = exists
+				blockSets[calculateBlockNumber(row, col)][value] = exists
 			}
 		}
 	}
-	puzzle.initialValues = data
-	puzzle.valuesWithInput = data
+	puzzle.cellValues = data
+
+	puzzle.neededSpaces = neededSpaces
+
 	puzzle.rowSets = rowSets
 	puzzle.colSets = colSets
 	puzzle.blockSets = blockSets
-	puzzle.neededSpaces = neededSpaces
 
 	return puzzle
+}
+
+func calculateBlockNumber(row int, col int) int {
+	return (row / 3) + (col/3)*3
 }
