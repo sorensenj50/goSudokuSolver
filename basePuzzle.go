@@ -13,6 +13,8 @@ type Puzzle struct {
 	givenRowSets   NestedSet
 	givenColSets   NestedSet
 	givenBlockSets NestedSet
+
+	matrix PossibilityMatrix
 }
 
 func makePuzzle(data [gridSize][gridSize]int) Puzzle {
@@ -38,6 +40,8 @@ func makePuzzle(data [gridSize][gridSize]int) Puzzle {
 	puzzle.establishGrid(makeGrid(data))
 	puzzle.neededSpaces = neededSpaces
 	puzzle.establishSets(nestedRowSets, nestedColSets, nestedBlockSets)
+
+	puzzle.matrix = puzzle.fillPossibilityMatrix()
 
 	return puzzle
 }

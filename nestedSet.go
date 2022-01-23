@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+func makeInnerSet() map[int]struct{} {
+	return make(map[int]struct{})
+}
+
 type NestedSet struct {
 	sets map[int]map[int]struct{}
 }
@@ -10,10 +14,47 @@ func makeSet() NestedSet {
 	var wrapper NestedSet
 	outer := make(map[int]map[int]struct{})
 	for i := range [gridSize]int{} {
-		outer[i] = make(map[int]struct{})
+		outer[i] = makeInnerSet()
 	}
 	wrapper.sets = outer
 	return wrapper
+}
+
+func makeSolvedSet() NestedSet {
+	set := makeSet()
+	for outer := range [gridSize]int{} {
+		for inner := range [gridSize]int{} {
+			set.insert(outer, inner)
+		}
+	}
+	return set
+}
+
+func (wrapper *NestedSet) getDifferenceSet() NestedSet {
+	differenceSet := makeSet()
+	for outer := range [gridSize]int{} {
+		for inner := range [gridSize]int{} {
+			if !wrapper.checkExists(outer, inner+1) {
+				differenceSet.insert(outer, inner+1)
+			}
+		}
+	}
+	return differenceSet
+}
+
+func (wrapper *NestedSet) getInnerDifferenceSet(outer int) map[int]struct{} {
+	set := makeInnerSet()
+	for inner := range [gridSize]int{} {
+		if !wrapper.checkExists(outer, inner+1) {
+			set[inner] = exists
+		}
+	}
+	return set
+}
+
+func (wrapper *NestedSet) checkExists(outer, inner int) bool {
+	_, ok := wrapper.sets[outer][inner]
+	return ok
 }
 
 func (wrapper *NestedSet) insert(outer, inner int) {
@@ -58,4 +99,20 @@ func (wrapper *NestedSet) copySet() NestedSet {
 		}
 	}
 	return set
+}
+
+func checkExistsInner(set map[int]struct{}, num int) bool {
+	_, exists := set[num]
+	return exists
+}
+
+func mergeDifferenceSets(row, col, block map[int]struct{}) []int {
+	nums := []int{}
+	for i := range [gridSize]int{} {
+		i = i + 1
+		if checkExistsInner(row, i) && checkExistsInner(col, i) && checkExistsInner(block, i) {
+			nums = append(nums, i)
+		}
+	}
+	return nums
 }

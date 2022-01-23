@@ -32,6 +32,10 @@ func (puzzle *Puzzle) generateRandomSolution() {
 }
 
 func generateRandomNumber() int {
+	setRandomSeed()
+	return rand.Intn(gridSize-1+1) + 1
+}
+
+func setRandomSeed() {
 	rand.Seed(time.Now().UnixNano())
-	return rand.Intn(maxNum-minNum+1) + minNum
 }

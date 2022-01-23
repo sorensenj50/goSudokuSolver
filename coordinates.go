@@ -14,3 +14,11 @@ func makeCoordinates() Coordinates {
 func (coordinates *Coordinates) appendWrapper(pair [gridDimensions]int) {
 	coordinates.array = append(coordinates.array, pair)
 }
+
+func (coordinates *Coordinates) getRowNumber(i int) int {
+	return coordinates.array[i][0]
+}
+
+func (coordinates *Coordinates) getColumnNumber(i int) int {
+	return coordinates.array[i][1]
+}

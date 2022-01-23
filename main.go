@@ -2,8 +2,6 @@ package main
 
 const gridSize = 9
 const gridDimensions = 2
-const minNum = 1
-const maxNum = 9
 
 var exists = struct{}{}
 
@@ -22,9 +20,7 @@ func main() {
 	puzzle := makePuzzle(samplePuzzleValues)
 	puzzle.cellValues.display("Starting Grid")
 
-	puzzle.runNaiveRandom()
-
-	puzzle.cellValues.display("Solved Grid")
+	puzzle.runConstrainedRandom()
 
 }
 
