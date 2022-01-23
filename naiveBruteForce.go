@@ -13,7 +13,6 @@ func (puzzle *Puzzle) runNaiveRandom() {
 			continueLooping = false
 		} else {
 			puzzle.reset()
-			continueLooping = false
 		}
 	}
 }

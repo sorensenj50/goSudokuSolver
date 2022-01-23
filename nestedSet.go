@@ -33,7 +33,7 @@ func (wrapper *NestedSet) checkSolved(outer int) bool {
 }
 
 func (wrapper *NestedSet) reset(givenNestedSet *NestedSet) {
-	wrapper.sets = givenNestedSet.sets
+	wrapper.sets = givenNestedSet.copySet().sets
 }
 
 func (wrapper *NestedSet) displaySingle(outer int) {

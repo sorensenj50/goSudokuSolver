@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 type Puzzle struct {
 	cellValues  Grid
 	givenValues Grid
@@ -62,18 +60,12 @@ func (puzzle *Puzzle) checkSolved() bool {
 }
 
 func (puzzle *Puzzle) reset() {
-	fmt.Println("Given")
-	puzzle.givenRowSets.displayAll()
-
-	fmt.Println("Changed")
-	puzzle.rowSets.displayAll()
 
 	puzzle.rowSets.reset(&puzzle.givenRowSets)
 	puzzle.colSets.reset(&puzzle.givenColSets)
 	puzzle.blockSets.reset(&puzzle.givenBlockSets)
 
 	puzzle.cellValues.reset(&puzzle.givenValues)
-
 }
 
 func (puzzle *Puzzle) establishSets(row, col, block NestedSet) {
