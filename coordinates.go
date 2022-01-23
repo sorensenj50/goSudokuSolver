@@ -11,6 +11,6 @@ func makeCoordinates() Coordinates {
 	return coordinates
 }
 
-func (coordinates *Coordinates) append(pair [gridDimensions]int) {
+func (coordinates *Coordinates) appendWrapper(pair [gridDimensions]int) {
 	coordinates.array = append(coordinates.array, pair)
 }

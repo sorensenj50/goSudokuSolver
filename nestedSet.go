@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type NestedSet struct {
 	sets map[int]map[int]struct{}
 }
@@ -32,4 +34,28 @@ func (wrapper *NestedSet) checkSolved(outer int) bool {
 
 func (wrapper *NestedSet) reset(givenNestedSet *NestedSet) {
 	wrapper.sets = givenNestedSet.sets
+}
+
+func (wrapper *NestedSet) displaySingle(outer int) {
+	for key, _ := range wrapper.sets[outer] {
+		fmt.Print(key, " ")
+	}
+}
+
+func (wrapper *NestedSet) displayAll() {
+	for key, _ := range wrapper.sets {
+		fmt.Print(key, " | ")
+		wrapper.displaySingle(key)
+		fmt.Print("\n")
+	}
+}
+
+func (wrapper *NestedSet) copySet() NestedSet {
+	set := makeSet()
+	for outerKey, outerValue := range wrapper.sets {
+		for innerKey, _ := range outerValue {
+			set.insert(outerKey, innerKey)
+		}
+	}
+	return set
 }

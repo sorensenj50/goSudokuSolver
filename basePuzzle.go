@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Puzzle struct {
 	cellValues  Grid
 	givenValues Grid
@@ -19,16 +21,15 @@ func makePuzzle(data [gridSize][gridSize]int) Puzzle {
 	var puzzle Puzzle
 
 	neededSpaces := makeCoordinates()
-	nestedRowSets := makeSet()
-	nestedColSets := makeSet()
-	nestedBlockSets := makeSet()
+	nestedRowSets, nestedColSets, nestedBlockSets := puzzle.makeSets()
 
 	for row := range [gridSize]int{} {
 		for col := range [gridSize]int{} {
 			value := data[row][col]
-			if value == 0 {
 
-			} else { // only want non-zero values in sets
+			if value == 0 { // only want non-zero values in sets
+				neededSpaces.appendWrapper([2]int{row, col})
+			} else {
 				nestedRowSets.insert(row, value)
 				nestedColSets.insert(col, value)
 				nestedBlockSets.insert(calculateBlockNumber(row, col), value)
@@ -36,18 +37,9 @@ func makePuzzle(data [gridSize][gridSize]int) Puzzle {
 		}
 	}
 
-	puzzle.cellValues = makeGrid(data)
-	puzzle.givenValues = makeGrid(data)
-
+	puzzle.establishGrid(makeGrid(data))
 	puzzle.neededSpaces = neededSpaces
-
-	puzzle.rowSets = nestedRowSets
-	puzzle.colSets = nestedColSets
-	puzzle.blockSets = nestedBlockSets
-
-	puzzle.givenRowSets = nestedRowSets
-	puzzle.givenColSets = nestedColSets
-	puzzle.blockSets = nestedBlockSets
+	puzzle.establishSets(nestedRowSets, nestedColSets, nestedBlockSets)
 
 	return puzzle
 }
@@ -70,8 +62,37 @@ func (puzzle *Puzzle) checkSolved() bool {
 }
 
 func (puzzle *Puzzle) reset() {
+	fmt.Println("Given")
+	puzzle.givenRowSets.displayAll()
+
+	fmt.Println("Changed")
+	puzzle.rowSets.displayAll()
+
 	puzzle.rowSets.reset(&puzzle.givenRowSets)
 	puzzle.colSets.reset(&puzzle.givenColSets)
 	puzzle.blockSets.reset(&puzzle.givenBlockSets)
+
 	puzzle.cellValues.reset(&puzzle.givenValues)
+
+}
+
+func (puzzle *Puzzle) establishSets(row, col, block NestedSet) {
+	puzzle.rowSets = row
+	puzzle.givenRowSets = row.copySet() // to avoid identical pointers
+
+	puzzle.colSets = col
+	puzzle.givenColSets = col.copySet()
+
+	puzzle.blockSets = block
+	puzzle.givenBlockSets = block.copySet()
+
+}
+
+func (puzzle *Puzzle) establishGrid(grid Grid) {
+	puzzle.cellValues = grid
+	puzzle.givenValues = grid
+}
+
+func (puzzle *Puzzle) makeSets() (row, col, block NestedSet) {
+	return makeSet(), makeSet(), makeSet()
 }
