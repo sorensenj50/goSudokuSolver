@@ -1,9 +1,5 @@
 package main
 
-import (
-	"fmt"
-)
-
 const gridSize = 9
 const gridDimensions = 2
 const minNum = 1
@@ -12,8 +8,6 @@ const maxNum = 9
 var exists = struct{}{}
 
 func main() {
-	fmt.Println("Hello World")
-
 	samplePuzzleValues := [gridSize][gridSize]int{
 		{0, 0, 0, 2, 6, 0, 7, 0, 1},
 		{6, 8, 0, 0, 7, 0, 0, 9, 0},
@@ -26,16 +20,7 @@ func main() {
 		{7, 0, 3, 0, 1, 8, 0, 0, 0},
 	}
 
-	puzzle := makePuzzle(samplePuzzleValues)
-	//puzzle = puzzle.generateRandomSolution()
+	grid := makeGrid(samplePuzzleValues)
+	grid.display()
 
-	newPuzzle := testPuzzle(puzzle)
-	displayGrid(puzzle.cellValues)
-	displayGrid(newPuzzle.cellValues)
-
-}
-
-func testPuzzle(puzzle Puzzle) Puzzle {
-	puzzle.cellValues[0][0] = 100
-	return puzzle
 }
