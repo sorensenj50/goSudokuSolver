@@ -17,9 +17,23 @@ func main() {
 		{0, 4, 0, 0, 5, 0, 0, 3, 6},
 		{7, 0, 3, 0, 1, 8, 0, 0, 0},
 	}
+
 	puzzle := makePuzzle(samplePuzzleValues)
 	puzzle.cellValues.display("Staring Grid")
 	puzzle.addConstraints()
 
-	puzzle.rowSets.displayAll()
+	puzzle.deduce()
+
+	puzzle.cellValues.display("After Initial Deduction")
 }
+
+//func test() {
+//	value := true
+//	testInner(&value)
+//	fmt.Println(value)
+//}
+//
+//func testInner(value *bool) {
+//	newValue := false
+//	value = &newValue
+//}

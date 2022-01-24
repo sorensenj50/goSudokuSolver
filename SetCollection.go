@@ -26,6 +26,10 @@ func (collection *SetCollection) addConstraint(outer, inner int) {
 	collection.sets[outer].addConstraint(inner)
 }
 
+func (collection *SetCollection) getPossibilities(outer int) *Set {
+	return collection.sets[outer].possibilities
+}
+
 func (collection *SetCollection) displayStaticTop() {
 	fmt.Println()
 	fmt.Println("Kind Along Y-Axis, Number Along X-Axis")
@@ -83,6 +87,6 @@ func (dual *DualSet) getNumPossibilities() int {
 func makeDualSet() *DualSet {
 	var dualSet DualSet
 	dualSet.constraints = makeSet()
-	dualSet.possibilities = makeSet()
+	dualSet.possibilities = makeFullSet()
 	return &dualSet
 }
