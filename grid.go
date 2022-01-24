@@ -27,6 +27,14 @@ func (wrapper *Grid) reset(given *Grid) {
 	wrapper.grid = given.grid
 }
 
+func (wrapper *Grid) iterate(f func(row, col int)) {
+	for rowNum := range [gridSize]int{} {
+		for colNum := range [gridSize]int{} {
+			f(rowNum, colNum)
+		}
+	}
+}
+
 func (wrapper *Grid) display(message string) {
 	string := "\n   " + message + " \n  "
 	for rowNum := range [gridSize]int{} {

@@ -18,25 +18,8 @@ func main() {
 		{7, 0, 3, 0, 1, 8, 0, 0, 0},
 	}
 	puzzle := makePuzzle(samplePuzzleValues)
-	puzzle.cellValues.display("Starting Grid")
+	puzzle.cellValues.display("Staring Grid")
+	puzzle.addConstraints()
 
-	puzzle.runConstrainedRandom()
-
-}
-
-type Thing struct {
-	set1 NestedSet
-	set2 NestedSet
-}
-
-func test() {
-	var thing Thing
-	set := makeSet()
-
-	thing.set1 = set
-	thing.set2 = set.copySet()
-
-	thing.set1.insert(8, 2)
-	thing.set2.displayAll()
-
+	puzzle.rowSets.displayAll()
 }
