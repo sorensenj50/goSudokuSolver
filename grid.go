@@ -14,6 +14,10 @@ func makeGrid() Grid {
 	return wrapper
 }
 
+func (wrapper *Grid) setGrid(data [gridSize][gridSize]int) {
+	wrapper.grid = data
+}
+
 func (wrapper *Grid) insert(rowNum, colNum, value int) {
 	wrapper.grid[rowNum][colNum] = value
 }
@@ -26,10 +30,14 @@ func (wrapper *Grid) reset(given *Grid) {
 	wrapper.grid = given.grid
 }
 
-func (wrapper *Grid) iterate(f func(row, col int)) {
+func (wrapper *Grid) iterate(f func(row, col int), ignoreZeros bool) {
 	for rowNum := range [gridSize]int{} {
 		for colNum := range [gridSize]int{} {
-			f(rowNum, colNum)
+			if wrapper.get(rowNum, colNum) == 0 && ignoreZeros {
+
+			} else {
+				f(rowNum, colNum)
+			}
 		}
 	}
 }

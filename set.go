@@ -24,17 +24,15 @@ func (wrapper *BoolMap) toggle(key int) {
 	wrapper.bMap[key] = !value
 }
 
-func (wrapper *BoolMap) setTrue(key int) {
-	wrapper.bMap[key] = true
-}
-
-func (wrapper *BoolMap) setFalse(key int) {
-	wrapper.bMap[key] = false
+func (wrapper *BoolMap) set(key int, value bool) {
+	wrapper.bMap[key] = value
 }
 
 func (wrapper *BoolMap) pop() int {
-	for key, _ := range wrapper.bMap {
-		return key
+	for key, value := range wrapper.bMap {
+		if value {
+			return key
+		}
 	}
 	return 0
 }
@@ -76,36 +74,39 @@ func (wrapper *BoolMap) getNumKeys(wantTrueValues bool) int {
 }
 
 func (wrapper *BoolMap) intersection(wantTrueValues bool, other, another *BoolMap) *BoolMap {
-	unionSet := makeBoolMap()
-
-	for i := range [gridSize]int{} {
-		key := i + 1
-		if wantTrueValues && wrapper.isTrue(key) && other.isTrue(key) && another.isTrue(key) {
-			unionSet.setTrue(key)
-		}
-
-		if !wantTrueValues && !wrapper.isTrue(key) && !other.isTrue(key) && !another.isTrue(key) {
-			unionSet.setFalse(key)
-		}
-	}
-	return unionSet
-}
-
-func (wrapper *BoolMap) union(wantTrueValues bool, other, another *BoolMap) *BoolMap {
 	intersectionSet := makeBoolMap()
 
 	for i := range [gridSize]int{} {
 		key := i + 1
-		if wantTrueValues && wrapper.isTrue(key) || other.isTrue(key) || another.isTrue(key) {
-			intersectionSet.setTrue(key)
-		}
-
-		if !wantTrueValues && !wrapper.isTrue(key) || !other.isTrue(key) || !another.isTrue(key) {
-			intersectionSet.setFalse(key)
+		if (wrapper.isTrue(key) == wantTrueValues) && (other.isTrue(key) == wantTrueValues) && (another.isTrue(key) == wantTrueValues) {
+			intersectionSet.set(key, wantTrueValues)
+			fmt.Println(key)
+			fmt.Println("is True")
+			fmt.Println("wrapper", wrapper.isTrue(key))
+			fmt.Println("other", other.isTrue(key))
+			fmt.Println("another", another.isTrue(key))
+		} else {
+			intersectionSet.set(key, !wantTrueValues)
 		}
 	}
 
 	return intersectionSet
+}
+
+func (wrapper *BoolMap) union(wantTrueValues bool, other, another *BoolMap) *BoolMap {
+	unionSet := makeBoolMap()
+
+	for i := range [gridSize]int{} {
+		key := i + 1
+
+		if wrapper.isTrue(key) || other.isTrue(key) || another.isTrue(key) {
+			unionSet.set(key, wantTrueValues)
+		} else {
+			unionSet.set(key, !wantTrueValues)
+		}
+	}
+
+	return unionSet
 }
 
 func (wrapper *BoolMap) display() {

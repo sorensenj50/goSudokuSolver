@@ -18,16 +18,13 @@ func main() {
 	//	{7, 0, 3, 0, 1, 8, 0, 0, 0},
 	//}
 
-	//puzzle := makePuzzle()
-	//puzzle.cellValues.display("Staring Grid")
-	//
+	//puzzle := makeSetPuzzle(samplePuzzleValues)
+	puzzle := makeRandomPuzzle()
+	puzzle.cellValues.display("Staring Grid")
+
+	//puzzle.addConstraints()
+	//puzzle.rowSets.displayAll()
+
 	//puzzle.deduce()
-	//
-	//puzzle.cellValues.display("After Deductions")
 
-	bMap := makeBoolMap()
-
-	bMap.setFalse(8)
-
-	bMap.display()
 }
