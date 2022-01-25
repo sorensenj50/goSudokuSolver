@@ -40,36 +40,18 @@ func (puzzle *Puzzle) deduceHelper(row, col int, decider *ContinueDecider) {
 		return
 	}
 
-	numPossibilities, value := puzzle.calculateJointPossibilities(row, col, calculateBlockNumber(row, col))
-	if numPossibilities == 1 {
-		puzzle.cellValues.insert(row, col, value)
+	jointPossibilities := puzzle.getJointPossibilities(row, col, calculateBlockNumber(row, col))
+	if jointPossibilities.getNumKeys(true) == 1 {
+		puzzle.cellValues.insert(row, col, jointPossibilities.pop())
 		puzzle.addConstraintsHelper(row, col)
 		decider.ensureTrue()
-
 	}
 }
 
-func (puzzle *Puzzle) calculateJointPossibilities(row, col, block int) (numOfPossibilities, value int) {
-	rowPossibilities := puzzle.rowSets.getPossibilities(row)
-	colPossibilities := puzzle.colSets.getPossibilities(col)
-	blockPossibilities := puzzle.blockSets.getPossibilities(block)
+func (puzzle *Puzzle) getJointPossibilities(row, col, block int) *BoolMap {
+	rowSet := puzzle.rowSets.sets[row]
+	colSet := puzzle.colSets.sets[col]
+	blockSet := puzzle.blockSets.sets[block]
 
-	jointPossibilities := rowPossibilities.intersection(colPossibilities, blockPossibilities)
-
-	return jointPossibilities.getLength(), jointPossibilities.pop()
+	return rowSet.intersection(true, colSet, blockSet)
 }
-
-func newTrue() *bool {
-	trueValue := true
-	return &trueValue
-}
-
-//func (puzzle *Puzzle) adjustNestedSets(row, col, value int) {
-//	puzzle.rowSets.insert(row, value)
-//	puzzle.colSets.insert(col, value)
-//	puzzle.blockSets.insert(calculateBlockNumber(row, col), value)
-//}
-//
-//func (puzzle *Puzzle) updatePossibilityMatrix(row, col, value int) {
-//
-//}

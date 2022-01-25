@@ -9,9 +9,8 @@ type Grid struct {
 	grid [gridSize][gridSize]int
 }
 
-func makeGrid(data [gridSize][gridSize]int) Grid {
+func makeGrid() Grid {
 	wrapper := Grid{}
-	wrapper.grid = data
 	return wrapper
 }
 

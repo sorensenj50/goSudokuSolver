@@ -1,17 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type SetCollection struct {
-	sets map[int]*DualSet
+	sets map[int]*BoolMap
 	kind string
 }
 
 func makeSets(kind string) SetCollection {
 	var wrapper SetCollection
-	outer := make(map[int]*DualSet)
+	outer := make(map[int]*BoolMap)
 	for i := range [gridSize]int{} {
-		outer[i] = makeDualSet()
+		outer[i] = makeBoolMap()
 	}
 	wrapper.sets = outer
 	wrapper.kind = kind
@@ -19,15 +21,19 @@ func makeSets(kind string) SetCollection {
 }
 
 func (collection *SetCollection) constraintExists(outer, inner int) bool {
-	return collection.sets[outer].constraints.doesContain(inner)
+	return collection.sets[outer].isFalse(inner)
 }
 
 func (collection *SetCollection) addConstraint(outer, inner int) {
-	collection.sets[outer].addConstraint(inner)
+	collection.sets[outer].setFalse(inner)
 }
 
-func (collection *SetCollection) getPossibilities(outer int) *Set {
-	return collection.sets[outer].possibilities
+func (collection *SetCollection) getPossibilities(outer int) []int {
+	return collection.sets[outer].getKeys(true)
+}
+
+func (collection *SetCollection) getNumConstraints(outer int) int {
+	return collection.sets[outer].getNumKeys(false)
 }
 
 func (collection *SetCollection) displayStaticTop() {
@@ -68,25 +74,4 @@ func (collection *SetCollection) displayOneHelper(value int) {
 
 func calculateBlockNumber(row int, col int) int {
 	return (row / 3) + (col/3)*3
-}
-
-type DualSet struct {
-	constraints   *Set
-	possibilities *Set
-}
-
-func (dual *DualSet) addConstraint(value int) {
-	dual.constraints.insert(value)
-	dual.possibilities.remove(value)
-}
-
-func (dual *DualSet) getNumPossibilities() int {
-	return dual.possibilities.getLength()
-}
-
-func makeDualSet() *DualSet {
-	var dualSet DualSet
-	dualSet.constraints = makeSet()
-	dualSet.possibilities = makeFullSet()
-	return &dualSet
 }
