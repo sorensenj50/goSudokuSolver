@@ -5,15 +5,15 @@ import (
 )
 
 type SetCollection struct {
-	sets map[int]*BoolMap
+	sets map[int]*ArraySet
 	kind string
 }
 
 func makeSets(kind string) SetCollection {
 	var wrapper SetCollection
-	outer := make(map[int]*BoolMap)
+	outer := make(map[int]*ArraySet)
 	for i := range [gridSize]int{} {
-		outer[i] = makeBoolMap()
+		outer[i] = makeArraySet()
 	}
 	wrapper.sets = outer
 	wrapper.kind = kind
@@ -21,7 +21,7 @@ func makeSets(kind string) SetCollection {
 }
 
 func (collection *SetCollection) constraintExists(outer, inner int) bool {
-	return collection.sets[outer].isFalse(inner)
+	return !collection.sets[outer].get(inner)
 }
 
 func (collection *SetCollection) addConstraint(outer, inner int) {
@@ -64,7 +64,7 @@ func (collection *SetCollection) displayOneHelper(value int) {
 			fmt.Print(value, " | ")
 		}
 
-		if collection.constraintExists(value, j+1) { // because 0 is empty value
+		if collection.constraintExists(value, j) {
 			fmt.Print("C", " ")
 		} else {
 			fmt.Print("P", " ")

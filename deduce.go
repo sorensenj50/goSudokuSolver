@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type ContinueDecider struct {
 	shouldContinue bool
 	counter        int
@@ -41,6 +43,9 @@ func (puzzle *Puzzle) deduceHelper(row, col int, decider *ContinueDecider) {
 	}
 
 	jointPossibilities := puzzle.getJointPossibilities(row, col, calculateBlockNumber(row, col))
+
+	fmt.Println("Possibilities for ", row, col)
+	jointPossibilities.display()
 	if jointPossibilities.getNumKeys(true) == 1 {
 		puzzle.cellValues.insert(row, col, jointPossibilities.pop())
 		puzzle.addConstraintsHelper(row, col)
@@ -48,7 +53,7 @@ func (puzzle *Puzzle) deduceHelper(row, col int, decider *ContinueDecider) {
 	}
 }
 
-func (puzzle *Puzzle) getJointPossibilities(row, col, block int) *BoolMap {
+func (puzzle *Puzzle) getJointPossibilities(row, col, block int) *ArraySet {
 	rowSet := puzzle.rowSets.sets[row]
 	colSet := puzzle.colSets.sets[col]
 	blockSet := puzzle.blockSets.sets[block]

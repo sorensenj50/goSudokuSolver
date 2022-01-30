@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 const gridSize = 9
 
 var numsArray = [...]int{1, 2, 3, 4, 5, 6, 7, 8, 9}
@@ -8,8 +10,8 @@ var numsArray = [...]int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 
 func main() {
 	//randomPuzzle()
-	//samplePuzzle()
-	test()
+	samplePuzzle()
+	//test()
 
 }
 
@@ -37,13 +39,14 @@ func samplePuzzle() {
 	puzzle.cellValues.display("Final Puzzle")
 }
 
-func randomPuzzle() {
-	puzzle := makePuzzle()
-	puzzle.cellValues.display("")
-	puzzle.backTrackInsertion()
-
-	//puzzle.cellValues.display("Random Starting Grid")
-}
+//
+//func randomPuzzle() {
+//	puzzle := makePuzzle()
+//	puzzle.cellValues.display("")
+//	puzzle.backTrackInsertion()
+//
+//	//puzzle.cellValues.display("Random Starting Grid")
+//}
 
 func test() {
 
@@ -54,5 +57,7 @@ func test() {
 	arraySet.shuffle()
 
 	arraySet.display()
+
+	fmt.Print(arraySet.pop())
 
 }

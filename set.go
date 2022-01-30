@@ -6,127 +6,8 @@ import (
 	"time"
 )
 
-type BoolMap struct {
-	bMap map[int]bool
-}
-
-func makeBoolMap() *BoolMap {
-	var set BoolMap
-	set.bMap = make(map[int]bool)
-
-	for i := range [gridSize]int{} {
-		set.bMap[i+1] = true
-	}
-
-	return &set
-}
-
-func (wrapper *BoolMap) toggle(key int) {
-	value := wrapper.bMap[key]
-	wrapper.bMap[key] = !value
-}
-
-func (wrapper *BoolMap) set(key int, value bool) {
-	wrapper.bMap[key] = value
-}
-
-func (wrapper *BoolMap) pop() int {
-	if wrapper.isAllFalse() {
-		return 0
-	} else {
-		for true {
-			randomNumber := numsArray[getRandomIndex()]
-			if wrapper.isTrue(randomNumber) {
-				return randomNumber
-			}
-		}
-	}
-
-	return 1
-}
-
-func (wrapper *BoolMap) isAllFalse() bool {
-	for num := range wrapper.bMap {
-		if wrapper.isTrue(num) {
-			return false
-		}
-	}
-	return true
-}
-
-func (wrapper *BoolMap) isTrue(key int) bool {
-	return wrapper.bMap[key]
-}
-
-func (wrapper *BoolMap) isFalse(key int) bool {
-	return !wrapper.isTrue(key)
-}
-
-func (wrapper *BoolMap) getKeys(wantTrueValues bool) []int {
-	slice := []int{}
-	for key, trueValue := range wrapper.bMap {
-		if wantTrueValues && trueValue {
-			slice = append(slice, key)
-		}
-
-		if !wantTrueValues && !trueValue {
-			slice = append(slice, key)
-		}
-	}
-	return slice
-}
-
-func (wrapper *BoolMap) getNumKeys(wantTrueValues bool) int {
-	counter := 0
-	for _, trueValue := range wrapper.bMap {
-		if wantTrueValues && trueValue {
-			counter += 1
-		}
-
-		if !wantTrueValues && !trueValue {
-			counter += 1
-		}
-	}
-	return counter
-}
-
-func (wrapper *BoolMap) intersection(wantTrueValues bool, other, another *BoolMap) *BoolMap {
-	intersectionSet := makeBoolMap()
-
-	for i := range [gridSize]int{} {
-		key := i + 1
-		if (wrapper.isTrue(key) == wantTrueValues) && (other.isTrue(key) == wantTrueValues) && (another.isTrue(key) == wantTrueValues) {
-			intersectionSet.set(key, wantTrueValues)
-		} else {
-			intersectionSet.set(key, !wantTrueValues)
-		}
-	}
-	return intersectionSet
-}
-
-func (wrapper *BoolMap) union(wantTrueValues bool, other, another *BoolMap) *BoolMap {
-	unionSet := makeBoolMap()
-
-	for i := range [gridSize]int{} {
-		key := i + 1
-
-		if wrapper.isTrue(key) || other.isTrue(key) || another.isTrue(key) {
-			unionSet.set(key, wantTrueValues)
-		} else {
-			unionSet.set(key, !wantTrueValues)
-		}
-	}
-	return unionSet
-}
-
-func (wrapper *BoolMap) display() {
-	for key, value := range wrapper.bMap {
-		fmt.Println(key, ": ", value)
-	}
-}
-
 type ArraySet struct {
-	// maps numbers to booleans
+	// index acts as a key for boolean mapping
 	static [9]bool
 
 	// maps ordering (which can be shuffled) to numbers
@@ -176,26 +57,33 @@ func (wrapper *ArraySet) getKeys(need bool) []int {
 	return arraySlice
 }
 
-func (wrapper *ArraySet) union(need bool, other, another *ArraySet) []int {
-	arraySlice := []int{}
+func (wrapper *ArraySet) iterate(need bool, other, another *ArraySet, f func(need bool, index int, other, another *ArraySet) bool) *ArraySet {
+	arraySet := makeArraySet()
 	for index := range wrapper.static {
-		condition := wrapper.get(index) == need && other.get(index) == need && another.get(index) == need
+		condition := f(need, index, other, another)
 		if condition {
-			arraySlice = append(arraySlice, index)
+			arraySet.set(index, need)
+		} else {
+			arraySet.set(index, !need)
 		}
 	}
-	return arraySlice
+	return arraySet
 }
 
-func (wrapper *ArraySet) intersection(need bool, other, another *ArraySet) []int {
-	arraySlice := []int{}
-	for index := range wrapper.static {
-		condition := wrapper.get(index) == need || other.get(index) == need || another.get(index) == need
-		if condition {
-			arraySlice = append(arraySlice, index)
-		}
-	}
-	return arraySlice
+func (wrapper *ArraySet) intersection(need bool, other, another *ArraySet) *ArraySet {
+	return wrapper.iterate(need, other, another, wrapper.intersectionCondition)
+}
+
+func (wrapper *ArraySet) intersectionCondition(need bool, index int, other, another *ArraySet) bool {
+	return wrapper.get(index) == need && other.get(index) == need && another.get(index) == need
+}
+
+func (wrapper *ArraySet) union(need bool, other, another *ArraySet) *ArraySet {
+	return wrapper.iterate(need, other, another, wrapper.unionCondition)
+}
+
+func (wrapper *ArraySet) unionCondition(need bool, index int, other, another *ArraySet) bool {
+	return wrapper.get(index) == need || other.get(index) == need || another.get(index) == need
 }
 
 func (wrapper *ArraySet) display() {
@@ -210,17 +98,27 @@ func (wrapper *ArraySet) display() {
 	}
 }
 
+func (wrapper *ArraySet) shuffle() {
+	for index := range wrapper.static {
+		newIndex := getRandomIndex()
+		wrapper.swap(index, newIndex)
+	}
+}
+
 func (wrapper *ArraySet) swap(indexOne, indexTwo int) {
 	temp := wrapper.shuffled[indexTwo]
 	wrapper.shuffled[indexTwo] = wrapper.shuffled[indexOne]
 	wrapper.shuffled[indexOne] = temp
 }
 
-func (wrapper *ArraySet) shuffle() {
-	for index := range wrapper.static {
-		newIndex := getRandomIndex()
-		wrapper.swap(index, newIndex)
+func (wrapper *ArraySet) pop() int {
+	for orderIndex := range wrapper.shuffled {
+		boolKey := wrapper.shuffled[orderIndex]
+		if wrapper.get(boolKey) {
+			return boolKey + 1
+		}
 	}
+	return 0
 }
 
 func getRandomIndex() int {
