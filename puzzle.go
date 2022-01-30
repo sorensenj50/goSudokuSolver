@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 type Puzzle struct {
 	cellValues Grid
 
@@ -38,7 +36,6 @@ func (puzzle *Puzzle) addConstraints() {
 
 func (puzzle *Puzzle) addConstraintsHelper(row, col int) {
 	value := puzzle.cellValues.get(row, col)
-	fmt.Println("Value Adding to Constraints ", value)
 	puzzle.rowSets.addConstraint(row, value)
 	puzzle.colSets.addConstraint(col, value)
 	puzzle.blockSets.addConstraint(calculateBlockNumber(row, col), value)

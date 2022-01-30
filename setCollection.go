@@ -26,9 +26,6 @@ func (collection *SetCollection) constraintExists(outer, inner int) bool {
 
 func (collection *SetCollection) addConstraint(outer, inner int) {
 	collection.sets[outer].set(inner, false)
-	if collection.kind == "row" {
-		collection.sets[outer].display()
-	}
 }
 
 func (collection *SetCollection) getPossibilities(outer int) []int {
