@@ -22,6 +22,10 @@ func (wrapper *Grid) insert(rowNum, colNum, value int) {
 	wrapper.grid[rowNum][colNum] = value
 }
 
+func (wrapper *Grid) remove(rowNum, colNum int) {
+	wrapper.grid[rowNum][colNum] = 0
+}
+
 func (wrapper *Grid) get(rowNum, colNum int) int {
 	return wrapper.grid[rowNum][colNum]
 }

@@ -18,12 +18,6 @@ func makePuzzle() Puzzle {
 	return puzzle
 }
 
-func makeRandomPuzzle() Puzzle {
-	puzzle := makePuzzle()
-	puzzle.generateRandomData()
-	return puzzle
-}
-
 func makeSetPuzzle(data [gridSize][gridSize]int) Puzzle {
 	puzzle := makePuzzle()
 	puzzle.cellValues.setGrid(data)

@@ -39,7 +39,6 @@ func samplePuzzle() {
 
 func randomPuzzle() {
 	puzzle := makePuzzle()
-	//puzzle.cellValues.display("")
 	puzzle.backTrackInsertion()
 
 	puzzle.cellValues.display()

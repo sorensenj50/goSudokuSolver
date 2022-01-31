@@ -1,16 +1,6 @@
 package main
 
-func (puzzle *Puzzle) generateRandomData() {
-	puzzle.cellValues.iterate(puzzle.insertWithinConstraints, false)
-}
-
-func (puzzle *Puzzle) insertWithinConstraints(row, col int) {
-	jointPossibilities := puzzle.getJointPossibilities(row, col, calculateBlockNumber(row, col))
-	topValue := jointPossibilities.pop(0)
-
-	puzzle.cellValues.insert(row, col, topValue)
-	puzzle.addConstraintsHelper(row, col)
-}
+import "fmt"
 
 func (puzzle *Puzzle) backTrackInsertion() {
 	row := 0
@@ -18,14 +8,18 @@ func (puzzle *Puzzle) backTrackInsertion() {
 	popAdjust := 0
 
 	for {
-
 		jointPossibilities := puzzle.getJointPossibilities(row, col, calculateBlockNumber(row, col))
 		topValue := jointPossibilities.pop(popAdjust)
 
-		if topValue == 0 {
+		fmt.Println(row, col, topValue)
+
+		shouldBacktrack := topValue == 0 || (jointPossibilities.getNumKeys(true) == 1 && popAdjust >= 0)
+		if shouldBacktrack {
 			row, col = moveIndicesBackward(row, col)
 			puzzle.removeConstraint(row, col)
+			puzzle.cellValues.remove(row, col)
 			popAdjust++
+
 		} else {
 			puzzle.cellValues.insert(row, col, topValue)
 			puzzle.addConstraintsHelper(row, col)
