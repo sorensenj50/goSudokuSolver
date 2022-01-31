@@ -40,3 +40,15 @@ func (puzzle *Puzzle) addConstraintsHelper(row, col int) {
 	puzzle.colSets.addConstraint(col, value-1)
 	puzzle.blockSets.addConstraint(calculateBlockNumber(row, col), value-1)
 }
+
+func (puzzle *Puzzle) display() {
+	puzzle.cellValues.display()
+}
+
+func (puzzle *Puzzle) removeConstraint(row, col int) {
+	value := puzzle.cellValues.get(row, col)
+	puzzle.rowSets.removeConstraint(row, value-1)
+	puzzle.colSets.removeConstraint(col, value-1)
+	puzzle.blockSets.removeConstraint(calculateBlockNumber(row, col), value-1)
+
+}

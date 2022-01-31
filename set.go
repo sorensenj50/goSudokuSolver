@@ -21,6 +21,8 @@ func makeArraySet() *ArraySet {
 		arraySet.shuffled[index] = index
 		arraySet.static[index] = true
 	}
+
+	arraySet.shuffle()
 	return &arraySet
 }
 
@@ -111,9 +113,9 @@ func (wrapper *ArraySet) swap(indexOne, indexTwo int) {
 	wrapper.shuffled[indexOne] = temp
 }
 
-func (wrapper *ArraySet) pop() int {
+func (wrapper *ArraySet) pop(adjust int) int {
 	for orderIndex := range wrapper.shuffled {
-		boolKey := wrapper.shuffled[orderIndex]
+		boolKey := wrapper.shuffled[adjustPopIndex(orderIndex, adjust)]
 		if wrapper.get(boolKey) {
 			return boolKey + 1
 		}
@@ -124,4 +126,8 @@ func (wrapper *ArraySet) pop() int {
 func getRandomIndex() int {
 	rand.Seed(time.Now().UTC().UnixNano())
 	return 0 + rand.Intn(8-0)
+}
+
+func adjustPopIndex(normal, adjustment int) int {
+	return (normal + adjustment) % 9
 }

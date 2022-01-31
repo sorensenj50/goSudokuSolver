@@ -47,7 +47,7 @@ func (puzzle *Puzzle) deduceHelper(row, col int, decider *ContinueDecider) {
 	fmt.Println("Possibilities for ", row, col)
 	jointPossibilities.display()
 	if jointPossibilities.getNumKeys(true) == 1 {
-		puzzle.cellValues.insert(row, col, jointPossibilities.pop())
+		puzzle.cellValues.insert(row, col, jointPossibilities.pop(0))
 		puzzle.addConstraintsHelper(row, col)
 		decider.ensureTrue()
 	}

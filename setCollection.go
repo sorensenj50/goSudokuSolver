@@ -28,6 +28,10 @@ func (collection *SetCollection) addConstraint(outer, inner int) {
 	collection.sets[outer].set(inner, false)
 }
 
+func (collection *SetCollection) removeConstraint(outer, inner int) {
+	collection.sets[outer].set(inner, true)
+}
+
 func (collection *SetCollection) getPossibilities(outer int) []int {
 	return collection.sets[outer].getKeys(true)
 }

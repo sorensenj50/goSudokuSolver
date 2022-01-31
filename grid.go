@@ -42,8 +42,8 @@ func (wrapper *Grid) iterate(f func(row, col int), ignoreZeros bool) {
 	}
 }
 
-func (wrapper *Grid) display(message string) {
-	string := "\n   " + message + " \n  "
+func (wrapper *Grid) display() {
+	string := "\n  "
 	for rowNum := range [gridSize]int{} {
 		for colNum := range [gridSize]int{} {
 			string += " " + strconv.Itoa(wrapper.get(rowNum, colNum)) + " "
@@ -61,4 +61,20 @@ func (wrapper *Grid) display(message string) {
 		}
 	}
 	fmt.Print(string)
+}
+
+func moveIndicesForward(row, col int) (int, int) {
+	if col == 8 {
+		return row + 1, 0
+	} else {
+		return row, col + 1
+	}
+}
+
+func moveIndicesBackward(row, col int) (int, int) {
+	if col == 0 {
+		return row - 1, 8
+	} else {
+		return row, col - 1
+	}
 }
