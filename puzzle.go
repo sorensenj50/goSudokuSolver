@@ -6,6 +6,7 @@ type Puzzle struct {
 	rowSets   SetCollection
 	colSets   SetCollection
 	blockSets SetCollection
+	future    *GridSetCollection
 }
 
 func makePuzzle() Puzzle {
@@ -14,6 +15,7 @@ func makePuzzle() Puzzle {
 	puzzle.rowSets = makeSets("row")
 	puzzle.colSets = makeSets("col")
 	puzzle.blockSets = makeSets("block")
+	puzzle.future = makeGridSet()
 
 	return puzzle
 }
@@ -30,9 +32,9 @@ func (puzzle *Puzzle) addConstraints() {
 
 func (puzzle *Puzzle) addConstraintsHelper(row, col int) {
 	value := puzzle.cellValues.get(row, col)
-	puzzle.rowSets.addConstraint(row, value-1) // sodoku is 1 indexed but arrays are zero indexed
-	puzzle.colSets.addConstraint(col, value-1)
-	puzzle.blockSets.addConstraint(calculateBlockNumber(row, col), value-1)
+	puzzle.rowSets.addConstraint(row, indexAdjust(value))
+	puzzle.colSets.addConstraint(col, indexAdjust(value))
+	puzzle.blockSets.addConstraint(calculateBlockNumber(row, col), indexAdjust(value))
 }
 
 func (puzzle *Puzzle) display() {
@@ -41,8 +43,21 @@ func (puzzle *Puzzle) display() {
 
 func (puzzle *Puzzle) removeConstraint(row, col int) {
 	value := puzzle.cellValues.get(row, col)
-	puzzle.rowSets.removeConstraint(row, value-1)
-	puzzle.colSets.removeConstraint(col, value-1)
-	puzzle.blockSets.removeConstraint(calculateBlockNumber(row, col), value-1)
+	puzzle.rowSets.removeConstraint(row, indexAdjust(value))
+	puzzle.colSets.removeConstraint(col, indexAdjust(value))
+	puzzle.blockSets.removeConstraint(calculateBlockNumber(row, col), indexAdjust(value))
+}
 
+func (puzzle *Puzzle) addFutureConstraint(row, col int) {
+	num := puzzle.cellValues.get(row, col)
+	puzzle.future.addConstraint(row, col, indexAdjust(num))
+}
+
+// sudoku is 1 indexed but arrays are zero indexed
+func indexAdjust(num int) int {
+	if num == 0 {
+		return 0
+	} else {
+		return num - 1
+	}
 }

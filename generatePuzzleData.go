@@ -5,27 +5,34 @@ import "fmt"
 func (puzzle *Puzzle) backTrackInsertion() {
 	row := 0
 	col := 0
-	popAdjust := 0
+	shouldBacktrack := false
 
 	for {
 		jointPossibilities := puzzle.getJointPossibilities(row, col, calculateBlockNumber(row, col))
-		topValue := jointPossibilities.pop(popAdjust)
+		topValue := jointPossibilities.pop()
 
 		fmt.Println(row, col, topValue)
+		puzzle.display()
 
-		shouldBacktrack := topValue == 0 || (jointPossibilities.getNumKeys(true) == 1 && popAdjust >= 0)
+		shouldBacktrack = topValue == 0
+
+		fmt.Println("shouldBackTrack", shouldBacktrack)
+		fmt.Println("num keys", jointPossibilities.getNumKeys(true))
+
 		if shouldBacktrack {
 			row, col = moveIndicesBackward(row, col)
+			fmt.Println(row, col)
+
 			puzzle.removeConstraint(row, col)
+			puzzle.addFutureConstraint(row, col)
 			puzzle.cellValues.remove(row, col)
-			popAdjust++
 
 		} else {
 			puzzle.cellValues.insert(row, col, topValue)
 			puzzle.addConstraintsHelper(row, col)
+			puzzle.future.reset(row, col)
 
 			row, col = moveIndicesForward(row, col)
-			popAdjust = 0
 			if row == 8 && col == 8 {
 				break
 			}

@@ -47,7 +47,7 @@ func (puzzle *Puzzle) deduceHelper(row, col int, decider *ContinueDecider) {
 	fmt.Println("Possibilities for ", row, col)
 	jointPossibilities.display()
 	if jointPossibilities.getNumKeys(true) == 1 {
-		puzzle.cellValues.insert(row, col, jointPossibilities.pop(0))
+		puzzle.cellValues.insert(row, col, jointPossibilities.pop())
 		puzzle.addConstraintsHelper(row, col)
 		decider.ensureTrue()
 	}
@@ -57,6 +57,9 @@ func (puzzle *Puzzle) getJointPossibilities(row, col, block int) *ArraySet {
 	rowSet := puzzle.rowSets.sets[row]
 	colSet := puzzle.colSets.sets[col]
 	blockSet := puzzle.blockSets.sets[block]
+	futureSet := puzzle.future.get(row, col)
 
-	return rowSet.intersection(true, colSet, blockSet)
+	rowAndCol := rowSet.intersection(true, colSet)
+	blockAndFuture := blockSet.intersection(true, futureSet)
+	return rowAndCol.intersection(true, blockAndFuture)
 }

@@ -68,7 +68,9 @@ func (wrapper *Grid) display() {
 }
 
 func moveIndicesForward(row, col int) (int, int) {
-	if col == 8 {
+	if col == 8 && row == 8 {
+		return 8, 8
+	} else if col == 8 {
 		return row + 1, 0
 	} else {
 		return row, col + 1
@@ -76,7 +78,9 @@ func moveIndicesForward(row, col int) (int, int) {
 }
 
 func moveIndicesBackward(row, col int) (int, int) {
-	if col == 0 {
+	if col == 0 && row == 0 {
+		return 0, 0
+	} else if col == 0 {
 		return row - 1, 8
 	} else {
 		return row, col - 1

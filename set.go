@@ -59,10 +59,10 @@ func (wrapper *ArraySet) getKeys(need bool) []int {
 	return arraySlice
 }
 
-func (wrapper *ArraySet) iterate(need bool, other, another *ArraySet, f func(need bool, index int, other, another *ArraySet) bool) *ArraySet {
+func (wrapper *ArraySet) iterate(need bool, other *ArraySet, f func(need bool, index int, other *ArraySet) bool) *ArraySet {
 	arraySet := makeArraySet()
 	for index := range wrapper.static {
-		condition := f(need, index, other, another)
+		condition := f(need, index, other)
 		if condition {
 			arraySet.set(index, need)
 		} else {
@@ -72,20 +72,20 @@ func (wrapper *ArraySet) iterate(need bool, other, another *ArraySet, f func(nee
 	return arraySet
 }
 
-func (wrapper *ArraySet) intersection(need bool, other, another *ArraySet) *ArraySet {
-	return wrapper.iterate(need, other, another, wrapper.intersectionCondition)
+func (wrapper *ArraySet) intersection(need bool, other *ArraySet) *ArraySet {
+	return wrapper.iterate(need, other, wrapper.intersectionCondition)
 }
 
-func (wrapper *ArraySet) intersectionCondition(need bool, index int, other, another *ArraySet) bool {
-	return wrapper.get(index) == need && other.get(index) == need && another.get(index) == need
+func (wrapper *ArraySet) intersectionCondition(need bool, index int, other *ArraySet) bool {
+	return wrapper.get(index) == need && other.get(index) == need
 }
 
-func (wrapper *ArraySet) union(need bool, other, another *ArraySet) *ArraySet {
-	return wrapper.iterate(need, other, another, wrapper.unionCondition)
+func (wrapper *ArraySet) union(need bool, other *ArraySet) *ArraySet {
+	return wrapper.iterate(need, other, wrapper.unionCondition)
 }
 
-func (wrapper *ArraySet) unionCondition(need bool, index int, other, another *ArraySet) bool {
-	return wrapper.get(index) == need || other.get(index) == need || another.get(index) == need
+func (wrapper *ArraySet) unionCondition(need bool, index int, other *ArraySet) bool {
+	return wrapper.get(index) == need || other.get(index) == need
 }
 
 func (wrapper *ArraySet) display() {
@@ -97,6 +97,13 @@ func (wrapper *ArraySet) display() {
 	fmt.Println("Shuffled")
 	for index := range wrapper.shuffled {
 		fmt.Println(index, ": ", wrapper.shuffled[index])
+	}
+}
+
+func (wrapper *ArraySet) displayStatic() {
+	fmt.Println("Static")
+	for index := range wrapper.static {
+		fmt.Println(index, "(", index+1, ")", ": ", wrapper.get(index))
 	}
 }
 
@@ -113,9 +120,9 @@ func (wrapper *ArraySet) swap(indexOne, indexTwo int) {
 	wrapper.shuffled[indexOne] = temp
 }
 
-func (wrapper *ArraySet) pop(adjust int) int {
+func (wrapper *ArraySet) pop() int {
 	for orderIndex := range wrapper.shuffled {
-		boolKey := wrapper.shuffled[adjustPopIndex(orderIndex, adjust)]
+		boolKey := wrapper.shuffled[orderIndex]
 		if wrapper.get(boolKey) {
 			return boolKey + 1
 		}
@@ -123,11 +130,18 @@ func (wrapper *ArraySet) pop(adjust int) int {
 	return 0
 }
 
+func (wrapper *ArraySet) reset() {
+	for index := range wrapper.static {
+		wrapper.set(index, true)
+	}
+}
+
 func getRandomIndex() int {
 	rand.Seed(time.Now().UTC().UnixNano())
 	return 0 + rand.Intn(8-0)
 }
 
-func adjustPopIndex(normal, adjustment int) int {
-	return (normal + adjustment) % 9
-}
+//
+//func adjustPopIndex(normal, adjustment int) int {
+//	return (normal + adjustment) % 9
+//}

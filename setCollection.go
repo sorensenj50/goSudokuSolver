@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 )
 
 type SetCollection struct {
@@ -78,4 +79,53 @@ func (collection *SetCollection) displayOneHelper(value int) {
 
 func calculateBlockNumber(row int, col int) int {
 	return (row / 3) + (col/3)*3
+}
+
+type GridSetCollection struct {
+	grid map[string]*ArraySet
+}
+
+func makeGridSet() *GridSetCollection {
+	var grid GridSetCollection
+	grid.grid = make(map[string]*ArraySet)
+	for rowNum := range [gridSize]int{} {
+		for colNum := range [gridSize]int{} {
+			set := makeArraySet()
+			grid.grid[getStringRowCol(rowNum, colNum)] = set
+		}
+	}
+	return &grid
+}
+
+func (wrapper *GridSetCollection) get(row, col int) *ArraySet {
+	return wrapper.grid[getStringRowCol(row, col)]
+}
+
+func (wrapper *GridSetCollection) addConstraint(row, col, num int) {
+	wrapper.grid[getStringRowCol(row, col)].set(num, false)
+}
+
+func (wrapper *GridSetCollection) reset(row, col int) {
+	wrapper.displaySelect(row, col)
+	wrapper = makeGridSet()
+	wrapper.displaySelect(row, col)
+}
+
+func (wrapper *GridSetCollection) display() {
+	for rowNum := range [gridSize]int{} {
+		for colNum := range [gridSize]int{} {
+			fmt.Print(rowNum, colNum)
+			set := wrapper.get(rowNum, colNum)
+			set.display()
+			fmt.Println("")
+		}
+	}
+}
+
+func (wrapper *GridSetCollection) displaySelect(row, col int) {
+	wrapper.get(row, col).displayStatic()
+}
+
+func getStringRowCol(row, col int) string {
+	return strconv.Itoa(row) + strconv.Itoa(col)
 }
