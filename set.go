@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
-	"time"
 )
 
 type ArraySet struct {
@@ -134,11 +132,6 @@ func (wrapper *ArraySet) reset() {
 	for index := range wrapper.static {
 		wrapper.set(index, true)
 	}
-}
-
-func getRandomIndex() int {
-	rand.Seed(time.Now().UTC().UnixNano())
-	return 0 + rand.Intn(8-0)
 }
 
 //

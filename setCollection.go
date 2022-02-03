@@ -105,21 +105,8 @@ func (wrapper *GridSetCollection) addConstraint(row, col, num int) {
 	wrapper.grid[getStringRowCol(row, col)].set(num, false)
 }
 
-func (wrapper *GridSetCollection) reset(row, col int) {
-	wrapper.displaySelect(row, col)
+func (wrapper *GridSetCollection) reset() {
 	wrapper = makeGridSet()
-	wrapper.displaySelect(row, col)
-}
-
-func (wrapper *GridSetCollection) display() {
-	for rowNum := range [gridSize]int{} {
-		for colNum := range [gridSize]int{} {
-			fmt.Print(rowNum, colNum)
-			set := wrapper.get(rowNum, colNum)
-			set.display()
-			fmt.Println("")
-		}
-	}
 }
 
 func (wrapper *GridSetCollection) displaySelect(row, col int) {

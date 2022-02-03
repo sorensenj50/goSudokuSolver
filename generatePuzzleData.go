@@ -21,7 +21,6 @@ func (puzzle *Puzzle) backTrackInsertion() {
 
 		if shouldBacktrack {
 			row, col = moveIndicesBackward(row, col)
-			fmt.Println(row, col)
 
 			puzzle.removeConstraint(row, col)
 			puzzle.addFutureConstraint(row, col)
@@ -30,7 +29,7 @@ func (puzzle *Puzzle) backTrackInsertion() {
 		} else {
 			puzzle.cellValues.insert(row, col, topValue)
 			puzzle.addConstraintsHelper(row, col)
-			puzzle.future.reset(row, col)
+			puzzle.future.reset()
 
 			row, col = moveIndicesForward(row, col)
 			if row == 8 && col == 8 {

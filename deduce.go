@@ -61,5 +61,6 @@ func (puzzle *Puzzle) getJointPossibilities(row, col, block int) *ArraySet {
 
 	rowAndCol := rowSet.intersection(true, colSet)
 	blockAndFuture := blockSet.intersection(true, futureSet)
+
 	return rowAndCol.intersection(true, blockAndFuture)
 }
