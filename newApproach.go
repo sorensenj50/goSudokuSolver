@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -12,21 +14,44 @@ type NewPuzzle struct {
 
 func makeNewPuzzle() *NewPuzzle {
 	newPuzzle := NewPuzzle{}
+	newPuzzle.generator = makeGenerator()
 	return &newPuzzle
+}
+
+func (wrapper *NewPuzzle) reset() {
+	wrapper.values = [gridSize][gridSize]int{}
+	wrapper.generator.reset()
 }
 
 func (wrapper *NewPuzzle) addValues() {
 	row := 0
 	col := 0
-	shouldContinue := true
+	numIterations := 0
 
-	for shouldContinue {
+	for {
+		numIterations += 1
 		num := wrapper.generator.get()
-		if wrapper.isValid(num, row, col) {
-			wrapper.values[row][col] = num
+
+		if numIterations >= 2500 {
+			row, col, numIterations = 0, 0, 0
+			wrapper.reset()
+		} else if num == 0 {
+			row, col = moveIndicesBackward(row, col)
 			wrapper.generator.reset()
+			wrapper.generator.setInvalid(wrapper.values[row][col] - 1)
+			wrapper.values[row][col] = 0
+
+		} else if wrapper.isValid(num, row, col) {
+			wrapper.values[row][col] = num
+			if row == 8 && col == 8 {
+				wrapper.display()
+				break
+			} else {
+				wrapper.generator.reset()
+				row, col = moveIndicesForward(row, col)
+			}
 		} else {
-			wrapper.generator.setInvalid(num)
+			wrapper.generator.setInvalid(num - 1)
 		}
 	}
 }
@@ -56,7 +81,7 @@ func (wrapper *NewPuzzle) isValidBlock(value, row, col int) bool {
 	centerRow, centerCol := getBlockCenterCoordinates(row, col)
 
 	for _, vertical := range incrementArray {
-		for horizontal := range incrementArray {
+		for _, horizontal := range incrementArray {
 			if wrapper.values[centerRow+vertical][centerCol+horizontal] == value {
 				return false
 			}
@@ -70,6 +95,27 @@ func (wrapper *NewPuzzle) isValid(value, row, col int) bool {
 	isValidCol := wrapper.isValidCol(value, col)
 	isValidBlock := wrapper.isValidBlock(value, row, col)
 	return isValidRow && isValidCol && isValidBlock
+}
+
+func (wrapper *NewPuzzle) display() {
+	string := "\n  "
+	for rowNum := range [gridSize]int{} {
+		for colNum := range [gridSize]int{} {
+			string += " " + strconv.Itoa(wrapper.values[rowNum][colNum]) + " "
+
+			if colNum == 2 || colNum == 5 {
+				string += " | "
+			}
+
+			if colNum == 8 {
+				string += "\n  "
+			}
+		}
+		if rowNum == 2 || rowNum == 5 {
+			string += " ------------------------------- \n  "
+		}
+	}
+	fmt.Print(string)
 }
 
 func getBlockCenterCoordinates(row, col int) (int, int) {
@@ -94,15 +140,45 @@ func getBlockCenterCoordinates(row, col int) (int, int) {
 	}
 }
 
+func moveIndicesForward(row, col int) (int, int) {
+	if col == 8 && row == 8 {
+		return 8, 8
+	} else if col == 8 {
+		return row + 1, 0
+	} else {
+		return row, col + 1
+	}
+}
+
+func moveIndicesBackward(row, col int) (int, int) {
+	if col == 0 && row == 0 {
+		return 0, 0
+	} else if col == 0 {
+		return row - 1, 8
+	} else {
+		return row, col - 1
+	}
+}
+
 type RandomGenerator struct {
 	possibilities [gridSize]bool
+}
+
+func makeGenerator() RandomGenerator {
+	var generator RandomGenerator
+	possibilities := [9]bool{}
+	for index := range [gridSize]bool{} {
+		possibilities[index] = true
+	}
+	generator.possibilities = possibilities
+	return generator
 }
 
 func (wrapper *RandomGenerator) get() int {
 	num := randomNumber(0, len(wrapper.possibilities))
 	for range [gridSize]int{} {
 		if wrapper.possibilities[num] {
-			return num
+			return num + 1
 		} else {
 			num = (num + 1) % 9
 		}

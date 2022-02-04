@@ -11,27 +11,29 @@ func main() {
 
 }
 
-func samplePuzzle() {
-	samplePuzzleValues := getPuzzleData("puzzleTwo")
-
-	puzzle := makeSetPuzzle(samplePuzzleValues)
-	puzzle.cellValues.display()
-
-	puzzle.addConstraints()
-	puzzle.deduce()
-
-	puzzle.rowSets.displayAll()
-
-	puzzle.cellValues.display()
-}
+//
+//func samplePuzzle() {
+//	samplePuzzleValues := getPuzzleData("puzzleTwo")
+//
+//	puzzle := makeSetPuzzle(samplePuzzleValues)
+//	puzzle.cellValues.display()
+//
+//	puzzle.addConstraints()
+//	puzzle.deduce()
+//
+//	puzzle.rowSets.displayAll()
+//
+//	puzzle.cellValues.display()
+//}
 
 func test() {
 	newPuzzle := makeNewPuzzle()
 
-	newPuzzle.isValidBlock()
+	newPuzzle.addValues()
+
 }
 
-func randomTest() {
-	puzzle := makePuzzle()
-	puzzle.backTrackInsertion()
-}
+//func randomTest() {
+//	puzzle := makePuzzle()
+//	puzzle.backTrackInsertion()
+//}
