@@ -1,17 +1,31 @@
 package main
 
+import (
+	"sync"
+)
+
 const gridSize = 9
 
+var wg = sync.WaitGroup{}
+
 func main() {
-	newPuzzle := makePuzzle()
-	newPuzzle.fillGrid()
+	sharedBasePuzzle := makePuzzle()
+	concurrentSolve(sharedBasePuzzle, 2)
 
-	newPuzzle.makeGaps(0.5)
+}
 
-	newPuzzle.display()
+func concurrentSolve(puzzle Puzzle, numSolvers int) {
+	channel := make(chan string)
+	for i := 0; i < numSolvers; i++ {
+		puzzleCopy := puzzle
+		referenceToCopy := &puzzleCopy
+		wg.Add(1)
+		go solveThenDisplay(referenceToCopy, channel, i)
+	}
+	wg.Wait()
+}
 
-	newPuzzle.markGiven()
-
-	newPuzzle.fillGrid()
-
+func solveThenDisplay(puzzle *Puzzle, channel chan string, id int) {
+	puzzle.fillGrid(channel, id)
+	wg.Done()
 }

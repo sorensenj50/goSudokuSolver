@@ -12,11 +12,11 @@ type Puzzle struct {
 	tracker   CellTracker
 }
 
-func makePuzzle() *Puzzle {
+func makePuzzle() Puzzle {
 	newPuzzle := Puzzle{}
 	newPuzzle.generator = makeGenerator()
 	newPuzzle.tracker = makeTracker()
-	return &newPuzzle
+	return newPuzzle
 }
 
 func (wrapper *Puzzle) reset() {
@@ -40,12 +40,25 @@ func (wrapper *Puzzle) markGiven() {
 	}
 }
 
-func (wrapper *Puzzle) fillGrid() {
+func (wrapper *Puzzle) fillGrid(channel chan string, id int) {
 	row := 0
 	col := 0
 	numIterations := 0
 
 	for {
+
+		select {
+		case _, ok := <-channel:
+			if ok {
+				return
+			} else {
+				return
+			}
+
+		default:
+
+		}
+
 		numIterations += 1
 		num := wrapper.generator.get()
 
@@ -71,6 +84,7 @@ func (wrapper *Puzzle) fillGrid() {
 			if row == 8 && col == 8 {
 				wrapper.generator.reset()
 				wrapper.display()
+				channel <- "Finished"
 				break
 			} else {
 				wrapper.generator.reset()
