@@ -238,3 +238,5 @@ func getBlockCenterCoordinates(row, col int) (int, int) {
 		return 7, 7
 	}
 }
+
+// hello

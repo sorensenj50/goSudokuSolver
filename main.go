@@ -29,3 +29,5 @@ func solveThenDisplay(puzzle *Puzzle, channel chan string, id int) {
 	puzzle.fillGrid(channel, id)
 	wg.Done()
 }
+
+// hello
