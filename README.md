@@ -9,9 +9,9 @@ Learning Go by building a Sudoku Solver.
 
 * Solver
 * Random Puzzle Generator
+* `goroutines` for concurrent solving
 
 ### Planned Future Features
-* `goroutines` for faster, concurrent solving
 * API endpoint for puzzle / solution content delivery
 
 ## Contents
