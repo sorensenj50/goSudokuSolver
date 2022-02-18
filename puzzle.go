@@ -85,6 +85,7 @@ func (wrapper *Puzzle) fillGrid(channel chan string, id int) {
 				wrapper.generator.reset()
 				wrapper.display()
 				channel <- "Finished"
+				close(channel)
 				break
 			} else {
 				wrapper.generator.reset()

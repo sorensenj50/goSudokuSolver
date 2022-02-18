@@ -10,8 +10,7 @@ var wg = sync.WaitGroup{}
 
 func main() {
 	sharedBasePuzzle := makePuzzle()
-	concurrentSolve(sharedBasePuzzle, 2)
-
+	concurrentSolve(sharedBasePuzzle, 5)
 }
 
 func concurrentSolve(puzzle Puzzle, numSolvers int) {
