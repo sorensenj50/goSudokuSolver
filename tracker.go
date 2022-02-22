@@ -20,9 +20,9 @@ func (wrapper *CellTracker) set(row, col int, to bool) {
 	wrapper.tracker[id] = to
 }
 
-func (wrapper *CellTracker) canPlace(row, col int) bool {
+func (wrapper *CellTracker) cantPlace(row, col int) bool {
 	value, exists := wrapper.tracker[getKey(row, col)]
-	if !exists {
+	if exists {
 		return true
 	} else {
 		return value
@@ -32,7 +32,7 @@ func (wrapper *CellTracker) canPlace(row, col int) bool {
 func (wrapper *CellTracker) display() {
 	for row := range [gridSize]int{} {
 		for col := range [gridSize]int{} {
-			fmt.Print(wrapper.canPlace(row, col), " ")
+			fmt.Print(wrapper.cantPlace(row, col), " ")
 
 		}
 		fmt.Println("")

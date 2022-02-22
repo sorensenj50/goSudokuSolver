@@ -22,7 +22,7 @@ func makePuzzle() Puzzle {
 func (wrapper *Puzzle) reset() {
 	for row := range [gridSize]int{} {
 		for col := range [gridSize]int{} {
-			if wrapper.tracker.canPlace(row, col) {
+			if !wrapper.tracker.cantPlace(row, col) {
 				wrapper.values[row][col] = 0
 			}
 		}
@@ -40,30 +40,49 @@ func (wrapper *Puzzle) markGiven() {
 	}
 }
 
-func (wrapper *Puzzle) fillGrid(channel chan string, id int) {
+func (wrapper *Puzzle) checkChannel(crossChannel chan string) bool {
+	fmt.Println("Called")
+	select {
+	case _, ok := <-crossChannel:
+		fmt.Println(ok)
+		return true
+	default:
+		return false
+	}
+}
+
+func (wrapper *Puzzle) goBackwards(row, col int) (int, int) {
+	row, col = wrapper.findPreviousGap(row, col)
+	wrapper.generator.reset()
+	wrapper.generator.setInvalid(wrapper.values[row][col] - 1)
+	wrapper.values[row][col] = 0
+	return row, col
+}
+
+func (wrapper *Puzzle) foundSolution(crossChannel chan string) {
+	wrapper.generator.reset()
+	//crossChannel <- "Finished"
+	//returnChannel <- wrapper
+	//close(crossChannel)
+	//fmt.Println("Channel Closed")
+	//close(returnChannel) // ??
+}
+
+func (wrapper *Puzzle) fillGrid() *Puzzle {
 	row := 0
 	col := 0
 	numIterations := 0
 
 	for {
-
-		select {
-		case _, ok := <-channel:
-			if ok {
-				return
-			} else {
-				return
-			}
-
-		default:
-
-		}
+		//if wrapper.checkChannel(crossChannel) {
+		//	break
+		//}
 
 		numIterations += 1
 		num := wrapper.generator.get()
 
 		// can't do anything because cell is given
-		if !wrapper.tracker.canPlace(row, col) {
+		if wrapper.tracker.cantPlace(row, col) {
 			row, col = wrapper.findNextGap(row, col)
 
 			// resetting to get out stuck situation
@@ -73,19 +92,13 @@ func (wrapper *Puzzle) fillGrid(channel chan string, id int) {
 
 			// can't place, needs to go backwards
 		} else if num == 0 {
-			row, col = wrapper.findPreviousGap(row, col)
-			wrapper.generator.reset()
-			wrapper.generator.setInvalid(wrapper.values[row][col] - 1)
-			wrapper.values[row][col] = 0
+			row, col = wrapper.goBackwards(row, col)
 
 			// placing num
 		} else if wrapper.isValid(num, row, col) {
 			wrapper.values[row][col] = num
 			if row == 8 && col == 8 {
-				wrapper.generator.reset()
-				wrapper.display()
-				channel <- "Finished"
-				close(channel)
+				//wrapper.foundSolution(crossChannel)
 				break
 			} else {
 				wrapper.generator.reset()
@@ -97,6 +110,7 @@ func (wrapper *Puzzle) fillGrid(channel chan string, id int) {
 			wrapper.generator.setInvalid(num - 1)
 		}
 	}
+	return wrapper
 }
 
 func (wrapper *Puzzle) isValidRow(value, row int) bool {
@@ -161,10 +175,10 @@ func (wrapper *Puzzle) display() {
 	fmt.Print(string)
 }
 
-func (wrapper *Puzzle) makeGaps(probability float32) {
+func (wrapper *Puzzle) makeGaps(probability float64) {
 	for row := range [gridSize]int{} {
 		for col := range [gridSize]int{} {
-			randomFloat := rand.Float32()
+			randomFloat := rand.Float64()
 			if randomFloat > probability {
 				wrapper.values[row][col] = 0
 			}
@@ -175,12 +189,12 @@ func (wrapper *Puzzle) makeGaps(probability float32) {
 func (wrapper *Puzzle) findNextGap(row, col int) (int, int) {
 	row, col = moveIndicesForward(row, col)
 	for {
-		if wrapper.tracker.canPlace(row, col) {
-			return row, col
+		if wrapper.tracker.cantPlace(row, col) {
+			row, col = moveIndicesForward(row, col)
 		} else if row >= 8 && col >= 8 {
 			return 8, 8
 		} else {
-			row, col = moveIndicesForward(row, col)
+			return row, col
 		}
 	}
 }
@@ -188,12 +202,12 @@ func (wrapper *Puzzle) findNextGap(row, col int) (int, int) {
 func (wrapper *Puzzle) findPreviousGap(row, col int) (int, int) {
 	row, col = moveIndicesBackward(row, col)
 	for {
-		if wrapper.tracker.canPlace(row, col) {
-			return row, col
+		if wrapper.tracker.cantPlace(row, col) {
+			row, col = moveIndicesBackward(row, col)
 		} else if row <= 0 && col <= 0 {
 			return 0, 0
 		} else {
-			row, col = moveIndicesBackward(row, col)
+			return row, col
 		}
 	}
 }
