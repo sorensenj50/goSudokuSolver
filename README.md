@@ -1,5 +1,6 @@
 <p>
   <img src="https://img.shields.io/badge/Go-%20go1.18beta1-blue">
+    <img src="https://img.shields.io/badge/Gin-1.7.7-red">
 </p>
 
 # Sudoku Solver
