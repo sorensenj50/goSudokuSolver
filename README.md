@@ -10,7 +10,7 @@ Learning Go by building a Sudoku Solver.
 
 * Solver
 * Random Puzzle Generator
-* REST API that delivers puzzle and solution
+* API that delivers puzzle and solution
 
 ## Contents
 
